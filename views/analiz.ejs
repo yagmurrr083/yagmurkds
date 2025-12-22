@@ -1,36 +1,60 @@
 <!-- SECTION 1: INFO CARDS -->
 <div class="row g-4 mb-5">
-    <!-- Card 1: Tahmini Yıllık Getiri -->
+    <!-- Card 1: Tahmini Getiri (ML) -->
     <div class="col-md-4">
-        <div class="card stat-card h-100">
-            <div class="card-body">
-                <h5 class="card-title text-muted">Tahmini Yıllık Getiri</h5>
-                <!-- ID used for JS Update -->
-                <p class="stat-value" id="val-tahmini-getiri">- TL</p>
-                <p class="stat-label" id="label-margin-rate">YAPAY ZEKA TAHMİNİ (Marj: %<%= marginRate %>)</p>
+        <div class="card h-100 position-relative border-start border-5 border-success">
+            <div class="card-body text-center d-flex flex-column justify-content-center p-4">
+                <div class="mb-2 text-success opacity-75">
+                    <i class="fas fa-chart-line fa-2x"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold ls-1">Tahmini Yıllık Getiri</h6>
+                <!-- Maintained ID 'val-tahmini-getiri' for JS compatibility -->
+                <h2 class="display-6 fw-bold text-dark my-2" id="val-tahmini-getiri">
+                    <%= new Intl.NumberFormat('tr-TR', { style: 'currency' , currency: 'TRY' }).format(getiri || 0) %>
+                </h2>
+                <div class="badge bg-light text-dark border mt-2 py-2 px-3 rounded-pill">
+                    <i class="fas fa-brain text-primary me-1"></i>
+                    Makine Öğrenmesi Destekli Analiz
+                    <br>
+                    <small class="text-muted fw-normal" id="label-margin-rate">(Marj Öngörüsü: %<%= marginRate %>
+                            )</small>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Card 2: Kadın Girişimci Bütçesi -->
     <div class="col-md-4">
-        <div class="card stat-card h-100">
-            <div class="card-body">
-                <h5 class="card-title text-muted">Kadın Girişimci Bütçesi</h5>
-                <p class="stat-value" id="val-kadin-butcesi">- TL</p>
-                <p class="stat-label">Net Karın %72'si</p>
+        <div class="card h-100 position-relative border-start border-5 border-info">
+            <div class="card-body text-center d-flex flex-column justify-content-center p-4">
+                <div class="mb-2 text-info opacity-75">
+                    <i class="fas fa-hand-holding-heart fa-2x"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold ls-1">Kadın Girişimci Bütçesi</h6>
+                <!-- Maintained ID 'val-kadin-butcesi' for JS compatibility -->
+                <h2 class="display-6 fw-bold text-dark my-2" id="val-kadin-butcesi">
+                    <%= new Intl.NumberFormat('tr-TR', { style: 'currency' , currency: 'TRY' }).format(butce || 0) %>
+                </h2>
+                <div class="mt-2 text-muted small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Net Karın <strong>%72</strong>'si tahsis edilir.
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Card 3: Referans Firma Seç -->
+    <!-- Card 3: Reference Firma -->
     <div class="col-md-4">
-        <div class="card h-100 d-flex align-items-center justify-content-center bg-light border-dashed">
-            <div class="card-body text-center">
-                <h5 class="card-title mb-3">Referans Firma</h5>
-                <p class="text-muted small mb-3" id="selected-firm-name">Seçilmedi</p>
-                <button class="btn btn-sabanci px-4 py-2" data-bs-toggle="modal" data-bs-target="#referenceFirmModal">
-                    Referans Firma Seç
+        <div class="card h-100 bg-corporate text-white">
+            <div class="card-body text-center d-flex flex-column justify-content-center p-4">
+                <h6 class="text-white-50 text-uppercase fw-bold mb-3">Analiz Edilen Firma</h6>
+                <h3 class="fw-bold mb-4" id="selected-firm-name">
+                    <%= activeFirm ? (activeFirm.firma_adi || activeFirm.ad) : 'Firma Seçilmedi' %>
+                </h3>
+                <!-- Maintained ID 'referenceFirmModal' for compatibility -->
+                <button class="btn btn-light text-corporate fw-bold w-75 mx-auto rounded-pill shadow-sm"
+                    data-bs-toggle="modal" data-bs-target="#referenceFirmModal">
+                    <i class="fas fa-exchange-alt me-2"></i>Firma Değiştir
                 </button>
             </div>
         </div>

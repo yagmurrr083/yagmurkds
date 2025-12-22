@@ -4,71 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %> - Sabancı Vakfı KDS
-    </title>
-    <!-- Absolute Path for Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-
-    <!-- Bootstrap 5 CSS -->
+    <title>Sabancı Vakfı KDS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Custom CSS (Absolute Path) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body class="bg-light">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-sabanci shadow-sm">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
-                <!-- Placeholder Logo -->
-                <div class="logo-placeholder">SV</div>
-                <span class="fw-semibold">Sabancı Vakfı <span class="fw-light">KDS</span></span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-corporate shadow-sm sticky-top">
+        <div class="container-xl">
+            <a class="navbar-brand fw-bold tracking-wide" href="/">
+                <i class="fas fa-network-wired me-2"></i>SABANCI VAKFI <span class="fw-light">KDS</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link <%= activePage === 'analiz' ? 'active' : '' %>" href="/analiz">Analiz</a>
+                        <a class="nav-link px-4 fw-medium <%= typeof activePage !== 'undefined' && activePage === 'analiz' ? 'active-link' : '' %>"
+                            href="/analiz">ANALİZ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= activePage === 'firmalar' ? 'active' : '' %>"
-                            href="/firmalar">Firmalar</a>
+                        <a class="nav-link px-4 fw-medium <%= typeof activePage !== 'undefined' && activePage === 'firmalar' ? 'active-link' : '' %>"
+                            href="/firmalar">FİRMALAR</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= activePage === 'girisimciler' ? 'active' : '' %>"
-                            href="/girisimciler">Girişimciler</a>
+                        <a class="nav-link px-4 fw-medium <%= typeof activePage !== 'undefined' && activePage === 'girisimciler' ? 'active-link' : '' %>"
+                            href="/girisimciler">GİRİŞİMCİLER</a>
                     </li>
                 </ul>
+
+                <div class="d-flex align-items-center text-white-50">
+                    <small><i class="fas fa-user-circle me-1"></i> Admin</small>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Content -->
-    <main class="container py-4">
-        <%- include(body) %>
+    <main class="container-xl py-4 fade-in-up">
+        <%- body %>
     </main>
 
-    <!-- Footer -->
-    <footer class="text-center py-3 text-muted border-top mt-5">
-        <small>&copy; 2025 Sabancı Vakfı Karar Destek Sistemi</small>
+    <footer class="text-center py-4 text-muted mt-auto border-top">
+        <small>&copy; 2025 Sabancı Vakfı Karar Destek Sistemi. Tüm hakları saklıdır.</small>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Main JS (Absolute Path, Defer) -->
-    <script src="/js/main.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>
