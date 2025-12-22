@@ -14,8 +14,8 @@ function calculateDynamicMargin(firm) {
     // Feature 1: Water Efficiency (Less water per revenue = better tech)
     if (ciro > 0) {
         const waterIntensity = su / ciro;
-        if (waterIntensity < 0.0005) predictedMargin += 0.05; // Super efficient
-        else if (waterIntensity < 0.001) predictedMargin += 0.03; // Good
+        if (waterIntensity < 0.0005) predictedMargin += 0.05;
+        else if (waterIntensity < 0.001) predictedMargin += 0.03;
     }
 
     // Feature 2: Certificates (Premium Pricing Power)
@@ -38,25 +38,62 @@ function calculateDynamicMargin(firm) {
 
 export const getAnalizPage = async (req, res) => {
     try {
+        // 1. Fetch Settings
         let settings = { karbon_esik: 5000, butce_yuzdesi: 0.72 }
         try {
-            const result = await sql`SELECT * FROM ayarlar LIMIT 1`
-            if (result.length > 0) settings = result[0]
+            const s = await sql`SELECT * FROM ayarlar LIMIT 1`
+            if (s.length > 0) settings = s[0]
         } catch (e) { }
 
-        // Needed for initial server-side render if we want to show data immediately
-        // But currently main.js fetches data. We'll stick to the layout render.
+        // 2. Fetch Default Firm (for initial server-side render)
+        let activeFirm = null;
+        try {
+            const firms = await sql`SELECT * FROM "Firmalar" ORDER BY id ASC LIMIT 1`
+            if (firms.length > 0) activeFirm = firms[0];
+            else {
+                // Fallback if table name is lowercase
+                const firmsLow = await sql`SELECT * FROM firmalar ORDER BY id ASC LIMIT 1`
+                if (firmsLow.length > 0) activeFirm = firmsLow[0];
+            }
+        } catch (e) {
+            // Try lowercase fallback if first query threw error
+            try {
+                const firmsLow = await sql`SELECT * FROM firmalar ORDER BY id ASC LIMIT 1`
+                if (firmsLow.length > 0) activeFirm = firmsLow[0];
+            } catch (e2) { }
+        }
+
+        // 3. Calculate Initial Metrics (Avoids "getiri is not defined" error)
+        let getiri = 0;
+        let butce = 0;
+        let marginRate = 20;
+
+        if (activeFirm) {
+            const margin = calculateDynamicMargin(activeFirm);
+            const ciro = parseFloat(activeFirm.yillik_ciro || activeFirm.ciro || 0);
+            getiri = ciro * margin;
+            butce = getiri * 0.72; // settings.butce_yuzdesi normally, but simple logic here
+            marginRate = Math.round(margin * 100);
+        }
+
+        // 4. Render
         res.render('layout', {
             body: 'analiz',
             title: 'Analiz Paneli (Tekstil)',
             activePage: 'analiz',
             karbonEsik: settings.karbon_esik,
             butceYuzdesi: settings.butce_yuzdesi,
-            marginRate: "..." // Will be filled by JS or we could fetch default here
+
+            // Pass the calculated variables to EJS
+            activeFirm: activeFirm || {},
+            getiri: getiri,
+            butce: butce,
+            marginRate: marginRate
         })
+
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Sayfa yüklenemedi')
+        console.error("ANALIZ PAGE ERROR:", error)
+        res.status(500).send('Sayfa yüklenemedi: ' + error.message)
     }
 }
 
