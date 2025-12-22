@@ -49,7 +49,8 @@
             <div class="card-body text-center d-flex flex-column justify-content-center p-4">
                 <h6 class="text-white-50 text-uppercase fw-bold mb-3">Analiz Edilen Firma</h6>
                 <h3 class="fw-bold mb-4" id="selected-firm-name">
-                    <%= activeFirm ? (activeFirm.firma_adi || activeFirm.ad) : 'Firma Seçilmedi' %>
+                    <%= (activeFirm && (activeFirm.firma_adi || activeFirm.ad)) ? (activeFirm.firma_adi ||
+                        activeFirm.ad) : 'Firma Seçilmedi' %>
                 </h3>
                 <!-- Maintained ID 'referenceFirmModal' for compatibility -->
                 <button class="btn btn-light text-corporate fw-bold w-75 mx-auto rounded-pill shadow-sm"
@@ -68,7 +69,7 @@
         <div class="card h-100">
             <div class="card-header bg-transparent fw-bold text-sabanci">Sürdürülebilirlik Liderleri (Puan)</div>
             <div class="card-body">
-                <div class="chart-container">
+                <div class="chart-container" style="height: 300px; position: relative;">
                     <canvas id="chartLeaders"></canvas>
                 </div>
             </div>
@@ -89,7 +90,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="chart-container">
+                <div class="chart-container" style="height: 300px; position: relative;">
                     <canvas id="chartCarbon"></canvas>
                 </div>
             </div>
