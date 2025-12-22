@@ -1,22 +1,21 @@
 import express from 'express'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import pageRouter from './routers/pageRouter.js'
-
-// Fix for ES Modules __dirname
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const app = express()
 const port = process.env.PORT || 3000
 
+// VERCEL FIX: Use process.cwd() to locate folders in Lambda environment
+// __dirname is unreliable in bundled serverless functions
+const PROJECT_ROOT = process.cwd()
+
 // View Engine
 app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', path.join(PROJECT_ROOT, 'views'))
 
 // Middleware
 // Serve static files from 'public' directory
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(PROJECT_ROOT, 'public')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -25,11 +24,10 @@ app.use('/', pageRouter)
 
 // Error Handler
 app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).send('Bir şeyler ters gitti!')
+    console.error('SERVER ERROR:', err)
+    res.status(500).send('Bir şeyler ters gitti! Hata: ' + err.message)
 })
 
-// Vercel requires exporting the app
 export default app
 
 if (process.env.NODE_ENV !== 'production') {
