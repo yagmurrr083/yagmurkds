@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Elements
     const elFirmList = document.getElementById('firmList');
-    const modal = new bootstrap.Modal(document.getElementById('referenceFirmModal'));
+    const modalElement = document.getElementById('referenceFirmModal');
+    const modal = new bootstrap.Modal(modalElement);
 
     const sliderW1 = document.getElementById('w1');
     const sliderW2 = document.getElementById('w2');
@@ -23,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- INIT CHARTS ---
     function initCharts() {
-        // 1. Leaders (Pie)
         const ctxLeaders = document.getElementById('chartLeaders').getContext('2d');
         charts.leaders = new Chart(ctxLeaders, {
             type: 'pie',
@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
             options: { responsive: true, maintainAspectRatio: false }
         });
 
-        // 2. Carbon (Line)
         const ctxCarbon = document.getElementById('chartCarbon').getContext('2d');
         charts.carbon = new Chart(ctxCarbon, {
             type: 'line',
@@ -39,13 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: false } // Trends often better without zero
-                }
+                scales: { y: { beginAtZero: false } }
             }
         });
 
-        // 3. Entrepreneurs (Bar)
         const ctxEnt = document.getElementById('chartEntrepreneurs').getContext('2d');
         charts.entrepreneurs = new Chart(ctxEnt, {
             type: 'bar',
@@ -70,61 +66,76 @@ document.addEventListener('DOMContentLoaded', function () {
             if (selectedRefId) url += `&refId=${selectedRefId}`;
 
             const res = await fetch(url);
+            if (!res.ok) throw new Error('API Error: ' + res.status);
+
             const data = await res.json();
 
+            // SAFE GUARD: Check if data or data.info exists
+            if (!data || !data.info) {
+                console.warn("API returned incomplete data", data);
+                return;
+            }
+
             // 1. Update Info Cards
-            document.getElementById('val-tahmini-getiri').textContent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(data.info.tahminiGetiri);
-            document.getElementById('val-kadin-butcesi').textContent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(data.info.kadinButcesi);
-            document.getElementById('selected-firm-name').textContent = data.info.refFirmaAd;
+            document.getElementById('val-tahmini-getiri').textContent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(data.info.tahminiGetiri || 0);
+            document.getElementById('val-kadin-butcesi').textContent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(data.info.kadinButcesi || 0);
+            document.getElementById('selected-firm-name').textContent = data.info.refFirmaAd || 'Hata';
 
             // 2. Update Charts
-            // Leaders
-            charts.leaders.data = {
-                labels: data.charts.leaders.labels,
-                datasets: [{
-                    data: data.charts.leaders.data,
-                    backgroundColor: ['#003366', '#004080', '#0059b3', '#0073e6', '#3399ff', '#66b3ff', '#99ccff']
-                }]
-            };
-            charts.leaders.update();
+            if (data.charts) {
+                // Leaders
+                charts.leaders.data = {
+                    labels: data.charts.leaders?.labels || [],
+                    datasets: [{
+                        data: data.charts.leaders?.data || [],
+                        backgroundColor: ['#003366', '#004080', '#0059b3', '#0073e6', '#3399ff', '#66b3ff', '#99ccff']
+                    }]
+                };
+                charts.leaders.update();
 
-            // Carbon
-            charts.carbon.data = {
-                labels: data.charts.carbon.labels,
-                datasets: [
-                    {
-                        label: 'Karbon Ayak İzi',
-                        data: data.charts.carbon.data,
-                        borderColor: '#003366',
-                        backgroundColor: 'rgba(0, 51, 102, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Eşik Değer',
-                        data: Array(data.charts.carbon.labels.length).fill(data.charts.carbon.threshold),
-                        borderColor: '#dc3545', // Red
-                        borderDash: [5, 5],
-                        pointRadius: 0,
-                        fill: false
-                    }
-                ]
-            };
-            charts.carbon.update();
+                // Carbon
+                const threshold = data.charts.carbon?.threshold || 5000;
+                const carbonData = data.charts.carbon?.data || [];
+                const carbonLabels = data.charts.carbon?.labels || [];
 
-            // Entrepreneurs
-            charts.entrepreneurs.data = {
-                labels: data.charts.entrepreneurs.labels,
-                datasets: [{
-                    label: 'Uyumluluk Puanı',
-                    data: data.charts.entrepreneurs.data,
-                    backgroundColor: '#00A3E0'
-                }]
-            };
-            charts.entrepreneurs.update();
+                charts.carbon.data = {
+                    labels: carbonLabels,
+                    datasets: [
+                        {
+                            label: 'Karbon Ayak İzi',
+                            data: carbonData,
+                            borderColor: '#003366',
+                            backgroundColor: 'rgba(0, 51, 102, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Eşik Değer',
+                            data: Array(carbonLabels.length).fill(threshold),
+                            borderColor: '#dc3545',
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                };
+                charts.carbon.update();
+
+                // Entrepreneurs
+                charts.entrepreneurs.data = {
+                    labels: data.charts.entrepreneurs?.labels || [],
+                    datasets: [{
+                        label: 'Uyumluluk Puanı',
+                        data: data.charts.entrepreneurs?.data || [],
+                        backgroundColor: '#00A3E0'
+                    }]
+                };
+                charts.entrepreneurs.update();
+            }
 
         } catch (error) {
             console.error('Update Error:', error);
+            // Optional: Show error toast
         }
     }
 
@@ -141,11 +152,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Modal Load
-    const referenceFirmModal = document.getElementById('referenceFirmModal');
-    referenceFirmModal.addEventListener('show.bs.modal', async () => {
+    modalElement.addEventListener('show.bs.modal', async () => {
         elFirmList.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div></div>';
         try {
             const res = await fetch('/api/firmalar/list');
+            if (!res.ok) throw new Error("List load failed");
             const firms = await res.json();
 
             let html = '';
@@ -154,13 +165,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += `<button type="button" class="list-group-item list-group-item-action ${active}" onclick="selectFirm(${f.id})">
                     <div class="d-flex justify-content-between">
                         <span class="fw-bold">${f.ad}</span>
-                        <small class="text-muted">Ciro: ${new Intl.NumberFormat('tr-TR').format(f.ciro)}</small>
+                        <small class="text-muted">Ciro: ${new Intl.NumberFormat('tr-TR').format(f.ciro || 0)}</small>
                     </div>
                 </button>`;
             });
             elFirmList.innerHTML = html;
         } catch (e) {
-            elFirmList.innerHTML = '<p class="text-danger p-3">Liste yüklenemedi.</p>';
+            elFirmList.innerHTML = '<p class="text-danger p-3">Veri tabanı bağlantı hatası. Lütfen sayfayı yenileyin.</p>';
+            console.error(e);
         }
     });
 
