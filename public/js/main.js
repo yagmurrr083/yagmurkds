@@ -38,7 +38,14 @@ document.addEventListener('DOMContentLoaded', function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { y: { beginAtZero: false } }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 60000, // FIXED SCALE: Prevents jumping when threshold changes
+                        ticks: { stepSize: 10000 }
+                    }
+                }
             }
         });
 
@@ -70,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await res.json();
 
-            // SAFE GUARD: Check if data or data.info exists
+            // SAFE GUARD
             if (!data || !data.info) {
                 console.warn("API returned incomplete data", data);
                 return;
@@ -135,7 +142,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } catch (error) {
             console.error('Update Error:', error);
-            // Optional: Show error toast
         }
     }
 
@@ -176,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Make selectFirm global so onclick works
     window.selectFirm = function (id) {
         selectedRefId = id;
         modal.hide();
@@ -192,13 +197,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ threshold: val })
             });
-            updateDashboard(); // Refresh to see red line move
+            updateDashboard();
         } catch (e) {
             alert('Güncelleme hatası');
         }
     });
 
-    // Init
     initCharts();
-    updateDashboard(); // First load
+    updateDashboard();
 });
