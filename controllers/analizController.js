@@ -49,7 +49,6 @@ export const getAnalizData = async (req, res) => {
                 firms = await sql`SELECT * FROM "Firmalar" ORDER BY id ASC LIMIT 1`;
             }
         } catch (e) {
-            console.warn("Retrying firm query with lowercase...");
             if (refId) {
                 firms = await sql`SELECT * FROM firmalar WHERE id = ${refId}`;
             } else {
@@ -102,6 +101,13 @@ export const getAnalizData = async (req, res) => {
             return { ad: e.isletme_adi, score: Math.floor(Math.random() * 40) + 60 }
         }).sort((a, b) => b.score - a.score).slice(0, 7)
 
+        // FETCH DYNAMIC THRESHOLD
+        let settings = { karbon_esik: 5000 }
+        try {
+            const s = await sql`SELECT karbon_esik FROM ayarlar LIMIT 1`
+            if (s.length > 0) settings = s[0]
+        } catch (e) { }
+
         res.json({
             firm: firmData,
             info: {
@@ -114,7 +120,7 @@ export const getAnalizData = async (req, res) => {
                 carbon: {
                     labels: ['2020', '2021', '2022', '2023', '2024'],
                     data: [karbon * 1.1, karbon * 1.08, karbon * 1.05, karbon * 1.02, karbon],
-                    threshold: 50000
+                    threshold: Number(settings.karbon_esik)
                 },
                 entrepreneurs: { labels: entScores.map(e => e.ad), data: entScores.map(e => e.score) }
             }

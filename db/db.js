@@ -1,15 +1,14 @@
 import postgres from 'postgres'
 
-// SECURITY NOTE: In production, use process.env.DATABASE_URL.
-const connectionString = "postgresql://postgres.nsgajaiblzuevodmqozm:sabancidb11@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+// VERCEL CONFIGURATION CRITICAL UPDATE:
+// Switched port 5432 -> 6543 (Supabase Transaction Pooler)
+// This is required for Serverless Functions to prevent connection exhaustion/500 errors.
+const connectionString = "postgresql://postgres.nsgajaiblzuevodmqozm:sabancidb11@aws-1-eu-west-1.pooler.supabase.com:6543/postgres"
 
-// ULTIMATE COMPATIBILITY CONFIG
-// 1. prepare: false (Required for Transaction Pooler)
-// 2. ssl: object with rejectUnauthorized: false (Fixes self-signed/proxy cert issues on specific environments)
 const sql = postgres(connectionString, {
-    prepare: false,
+    prepare: false, // Required for Transaction Mode
     ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false // Fixes SSL handshake issues
     }
 })
 
