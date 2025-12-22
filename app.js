@@ -3,6 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import pageRouter from './routers/pageRouter.js'
 
+// Fix for ES Modules __dirname
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -14,6 +15,7 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
 // Middleware
+// Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -27,6 +29,11 @@ app.use((err, req, res, next) => {
     res.status(500).send('Bir şeyler ters gitti!')
 })
 
-app.listen(port, () => {
-    console.log(`Sunucu ${port} portunda çalışıyor...`)
-})
+// Vercel requires exporting the app
+export default app
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Sunucu ${port} portunda çalışıyor...`)
+    })
+}
