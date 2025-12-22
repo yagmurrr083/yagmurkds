@@ -41,10 +41,9 @@
                             <%= firma.karbon_ayak_izi %>
                         </td>
                         <td class="text-center">
-                            <% let badgeClass='bg-danger' ; // Scores might be weird/negative with new formula, just
-                                color appropriately for relative if (firma.uyumluluk_puani_hesapli> 0) badgeClass =
+                            <% let badgeClass='bg-danger' ; if (firma.uyumluluk_puani_hesapli>= 80) badgeClass =
                                 'bg-success';
-                                else if (firma.uyumluluk_puani_hesapli > -5000) badgeClass = 'bg-warning text-dark';
+                                else if (firma.uyumluluk_puani_hesapli >= 50) badgeClass = 'bg-warning text-dark';
                                 %>
                                 <span class="badge <%= badgeClass %> rounded-pill px-3 py-2">
                                     <%= firma.uyumluluk_puani_hesapli %>
