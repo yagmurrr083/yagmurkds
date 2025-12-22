@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-sabanci fw-bold">Firmalar (Tekstil Sektörü)</h2>
+    <span class="badge bg-secondary">
+        <%= firmalar.length %> Firma Listelendi
+    </span>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0 align-middle">
+            <thead class="bg-light sticky-top">
+                <tr>
+                    <th scope="col" class="ps-4">Firma Adı</th>
+                    <th scope="col">Sektör</th>
+                    <th scope="col" class="text-end">Ciro (TL)</th>
+                    <th scope="col" class="text-end text-danger">Su Tüketimi (m³)</th>
+                    <th scope="col" class="text-end text-warning">Atık Üretimi (Ton)</th>
+                    <th scope="col" class="text-end">Karbon</th>
+                    <th scope="col" class="text-center">Skor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% firmalar.forEach(firma=> { %>
+                    <tr>
+                        <td class="ps-4 fw-medium">
+                            <%= firma.ad %>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">
+                                <%= firma.sektor %>
+                            </span></td>
+                        <td class="text-end font-monospace">
+                            <%= new Intl.NumberFormat('tr-TR').format(firma.ciro) %>
+                        </td>
+                        <td class="text-end font-monospace text-danger fw-bold">
+                            <%= new Intl.NumberFormat('tr-TR').format(firma.su_tuketimi) %>
+                        </td>
+                        <td class="text-end font-monospace text-warning">
+                            <%= firma.atik_uretimi %>
+                        </td>
+                        <td class="text-end">
+                            <%= firma.karbon_ayak_izi %>
+                        </td>
+                        <td class="text-center">
+                            <% let badgeClass='bg-danger' ; // Scores might be weird/negative with new formula, just
+                                color appropriately for relative if (firma.uyumluluk_puani_hesapli> 0) badgeClass =
+                                'bg-success';
+                                else if (firma.uyumluluk_puani_hesapli > -5000) badgeClass = 'bg-warning text-dark';
+                                %>
+                                <span class="badge <%= badgeClass %> rounded-pill px-3 py-2">
+                                    <%= firma.uyumluluk_puani_hesapli %>
+                                </span>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>

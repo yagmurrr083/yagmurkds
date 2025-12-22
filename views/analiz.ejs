@@ -1,0 +1,145 @@
+<!-- SECTION 1: INFO CARDS -->
+<div class="row g-4 mb-5">
+    <!-- Card 1: Tahmini Yıllık Getiri -->
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Tahmini Yıllık Getiri</h5>
+                <!-- ID used for JS Update -->
+                <p class="stat-value" id="val-tahmini-getiri">- TL</p>
+                <p class="stat-label">Sektörel Kar Marjı (%20)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Kadın Girişimci Bütçesi -->
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Kadın Girişimci Bütçesi</h5>
+                <p class="stat-value" id="val-kadin-butcesi">- TL</p>
+                <p class="stat-label">Net Karın %72'si</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3: Referans Firma Seç -->
+    <div class="col-md-4">
+        <div class="card h-100 d-flex align-items-center justify-content-center bg-light border-dashed">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-3">Referans Firma</h5>
+                <p class="text-muted small mb-3" id="selected-firm-name">Seçilmedi</p>
+                <button class="btn btn-sabanci px-4 py-2" data-bs-toggle="modal" data-bs-target="#referenceFirmModal">
+                    Referans Firma Seç
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: CHARTS (Middle Row) -->
+<div class="row g-4 mb-5">
+    <!-- Sustainability Leaders (Pie) -->
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header bg-transparent fw-bold text-sabanci">Sürdürülebilirlik Liderleri (Puan)</div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="chartLeaders"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carbon Footprint Trend (Line) -->
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div
+                class="card-header bg-transparent fw-bold text-sabanci d-flex justify-content-between align-items-center">
+                <span>Karbon Ayak İzi Trendi</span>
+                <div class="d-flex align-items-center gap-2">
+                    <label for="thresholdInput" class="small text-muted mb-0">Eşik Değeri:</label>
+                    <input type="number" id="thresholdInput" class="form-control form-control-sm" style="width: 100px;"
+                        value="<%= karbonEsik %>">
+                    <button class="btn btn-sm btn-outline-secondary" id="btnUpdateThreshold">Güncelle</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="chartCarbon"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 3: ENTREPRENEUR ANALYSIS (Bottom Row) -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-transparent fw-bold text-sabanci">Girişimci Uyumluluk Analizi</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="chart-container" style="height: 400px;">
+                            <canvas id="chartEntrepreneurs"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-3 border-start">
+                        <h6 class="mb-4">Analiz Ağırlıkları</h6>
+
+                        <div class="mb-4">
+                            <label for="w1" class="form-label d-flex justify-content-between">
+                                <span>Kadın Çalışan Oranı</span>
+                                <span id="val-w1" class="fw-bold">50</span>
+                            </label>
+                            <input type="range" class="form-range" id="w1" min="0" max="100" value="50">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="w2" class="form-label d-flex justify-content-between">
+                                <span>Engelli Çalışan Oranı</span>
+                                <span id="val-w2" class="fw-bold">30</span>
+                            </label>
+                            <input type="range" class="form-range" id="w2" min="0" max="100" value="30">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="w3" class="form-label d-flex justify-content-between">
+                                <span>Kuruluş Yılı (Yenilik)</span>
+                                <span id="val-w3" class="fw-bold">20</span>
+                            </label>
+                            <input type="range" class="form-range" id="w3" min="0" max="100" value="20">
+                        </div>
+
+                        <div class="alert alert-info small">
+                            <i class="bi bi-info-circle"></i> Ağırlıkları değiştirerek analiz sonuçlarını anlık olarak
+                            güncelleyebilirsiniz.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reference Firm Modal -->
+<div class="modal fade" id="referenceFirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Referans Firma Seç</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="list-group list-group-flush" id="firmList">
+                    <!-- Loaded via AJAX -->
+                    <div class="text-center p-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
