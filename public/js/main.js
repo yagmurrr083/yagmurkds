@@ -88,6 +88,11 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('val-kadin-butcesi').textContent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(data.info.kadinButcesi || 0);
             document.getElementById('selected-firm-name').textContent = data.info.refFirmaAd || 'Hata';
 
+            // Update Dynamic Margin Label
+            if (data.info.marginRate) {
+                document.getElementById('label-margin-rate').textContent = `YAPAY ZEKA TAHMİNİ (Marj: %${data.info.marginRate})`;
+            }
+
             // 2. Update Charts
             if (data.charts) {
                 // Leaders
