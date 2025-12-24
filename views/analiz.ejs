@@ -1,4 +1,4 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <!-- Top Cards Section -->
     <div class="row g-4 mb-4">
         <!-- Card 1: Estimated Return -->
@@ -7,10 +7,10 @@
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted text-uppercase">Tahmini Getiri</h6>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h2 class="card-title text-primary fw-bold mb-0" id="tahmini-getiri-value">₺0</h2>
+                        <h2 class="card-title text-primary fw-bold mb-0" id="tahmini-getiri-value">â‚º0</h2>
                         <i class="fas fa-chart-line fa-2x text-primary opacity-25"></i>
                     </div>
-                    <small class="text-muted" id="secilen-firma-adi">Firma Seçiniz</small>
+                    <small class="text-muted" id="secilen-firma-adi">Firma SeÃ§iniz</small>
                 </div>
             </div>
         </div>
@@ -19,12 +19,12 @@
         <div class="col-md-4">
             <div class="card h-100 shadow-sm border-0 bg-white">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted text-uppercase">Kadın Girişimci Bütçesi (%72)</h6>
+                    <h6 class="card-subtitle mb-2 text-muted text-uppercase">KadÄ±n GiriÅŸimci BÃ¼tÃ§esi (%72)</h6>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h2 class="card-title text-success fw-bold mb-0" id="kadin-butce-value">₺0</h2>
+                        <h2 class="card-title text-success fw-bold mb-0" id="kadin-butce-value">â‚º0</h2>
                         <i class="fas fa-hand-holding-dollar fa-2x text-success opacity-25"></i>
                     </div>
-                    <small class="text-success">Otomatik Hesaplanır</small>
+                    <small class="text-success">Otomatik HesaplanÄ±r</small>
                 </div>
             </div>
         </div>
@@ -34,9 +34,9 @@
             <div class="card h-100 shadow-sm border-0 bg-gradient-primary text-white"
                 style="background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);">
                 <div class="card-body d-flex flex-column justify-content-center">
-                    <h6 class="card-subtitle mb-3 text-white-50 text-uppercase">Firma Seçimi</h6>
+                    <h6 class="card-subtitle mb-3 text-white-50 text-uppercase">Firma SeÃ§imi</h6>
                     <select class="form-select form-select-lg border-0 shadow-sm" id="firma-select">
-                        <option value="" disabled selected>Firma Seçiniz...</option>
+                        <option value="" disabled selected>Firma SeÃ§iniz...</option>
                         <% data.firms.forEach(function(f) { %>
                             <option value="<%= f.tahmini_getiri %>" data-ad="<%= f.ad %>">
                                 <%= f.ad %>
@@ -54,7 +54,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0">Sürdürülebilirlik Uyum Puanı (Top 7)</h5>
+                    <h5 class="fw-bold mb-0">SÃ¼rdÃ¼rÃ¼lebilirlik Uyum PuanÄ± (Top 7)</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="sustainabilityPieChart" style="max-height: 300px;"></canvas>
@@ -66,7 +66,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0">Atık Geri Dönüşüm Oranı (Top 10)</h5>
+                    <h5 class="fw-bold mb-0">AtÄ±k Geri DÃ¶nÃ¼ÅŸÃ¼m OranÄ± (Top 10)</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="recyclingLineChart" style="max-height: 300px;"></canvas>
@@ -81,10 +81,10 @@
             <div class="card shadow-sm border-0">
                 <div
                     class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0">Girişimci Uyumluluk Analizi</h5>
+                    <h5 class="fw-bold mb-0">GiriÅŸimci Uyumluluk Analizi</h5>
                     <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
                         data-bs-target="#referenceControls" aria-expanded="false">
-                        <i class="fas fa-sliders-h me-1"></i> Referans Değerleri
+                        <i class="fas fa-sliders-h me-1"></i> Referans DeÄŸerleri
                     </button>
                 </div>
                 <!-- Interactive Controls -->
@@ -92,7 +92,7 @@
                     <div class="card card-body bg-light border-0">
                         <div class="row align-items-end">
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">Kadın Çalışan Oranı Ref.</label>
+                                <label class="form-label small fw-bold">KadÄ±n Ã‡alÄ±ÅŸan OranÄ± Ref.</label>
                                 <input type="range" class="form-range" id="ref-kadin" min="0" max="100" value="50"
                                     oninput="updateBarChart()">
                                 <div class="d-flex justify-content-between small text-muted">
@@ -102,7 +102,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">Engelli Çalışan Oranı Ref.</label>
+                                <label class="form-label small fw-bold">Engelli Ã‡alÄ±ÅŸan OranÄ± Ref.</label>
                                 <input type="range" class="form-range" id="ref-engelli" min="0" max="100" value="30"
                                     oninput="updateBarChart()">
                                 <div class="d-flex justify-content-between small text-muted">
@@ -112,7 +112,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">Kuruluş Yılı Ref.</label>
+                                <label class="form-label small fw-bold">KuruluÅŸ YÄ±lÄ± Ref.</label>
                                 <input type="range" class="form-range" id="ref-yil" min="2000" max="2025" value="2015"
                                     oninput="updateBarChart()">
                                 <div class="d-flex justify-content-between small text-muted">
@@ -134,9 +134,9 @@
 
 <!-- Data from Server -->
 <script>
-    const pieDataRaw = <% - JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
-    const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
-    const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
+    const pieDataRaw = <%- JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
+    const lineDataRaw = <%- JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
+    const barDataRaw = <%- JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
 </script>
 
 <script>
@@ -147,7 +147,7 @@
         style: 'currency',
         currency: 'TRY',
         minimumFractionDigits: 2,
-        maximumFractionDigits: 10
+        maximumFractionDigits: 2
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -208,7 +208,7 @@
             data: {
                 labels: lineDataRaw.map(d => d.ad),
                 datasets: [{
-                    label: 'Geri Dönüşüm Oranı (%)',
+                    label: 'Geri DÃ¶nÃ¼ÅŸÃ¼m OranÄ± (%)',
                     data: lineDataRaw.map(d => d.geri_donusum_orani), // Assuming raw value like 0.45 or 45
                     borderColor: '#1cc88a',
                     backgroundColor: 'rgba(28, 200, 138, 0.1)',
@@ -232,14 +232,14 @@
             data: {
                 labels: barDataRaw.map(d => d.isletme_adi),
                 datasets: [{
-                    label: 'Kriter Uyumluluk Puanı',
+                    label: 'Kriter Uyumluluk PuanÄ±',
                     data: barDataRaw.map(d => d.kriter_uyumluluk_puani),
                     backgroundColor: '#4e73df',
                     order: 2
                 },
                 // Reference Lines (Simulated as Line Datasets)
                 {
-                    label: 'Ref: Kadın Çalışan',
+                    label: 'Ref: KadÄ±n Ã‡alÄ±ÅŸan',
                     data: Array(barDataRaw.length).fill(50),
                     type: 'line',
                     borderColor: '#f6c23e',
@@ -248,7 +248,7 @@
                     order: 1
                 },
                 {
-                    label: 'Ref: Engelli Çalışan',
+                    label: 'Ref: Engelli Ã‡alÄ±ÅŸan',
                     data: Array(barDataRaw.length).fill(30),
                     type: 'line',
                     borderColor: '#e74a3b',
@@ -284,8 +284,8 @@
 
         // Recalculate Scores based on References (Simulation)
         // Formula assumption: We adjust the score visually based on how close they are to the new reference
-        // Or simply update the reference lines. The user asked "referans değerleri gösteren çizgiler olsun... bar grafiğindeki
-        //uyumluluk oranı da değişsin"
+        // Or simply update the reference lines. The user asked "referans deÄŸerleri gÃ¶steren Ã§izgiler olsun... bar grafiÄŸindeki
+        //uyumluluk oranÄ± da deÄŸiÅŸsin"
 
         const newData = barDataRaw.map(item => {
             let baseScore = parseFloat(item.kriter_uyumluluk_puani);
@@ -311,7 +311,7 @@
 
         // Update Reference Lines
         // We map the reference value directly to the chart scale for visualization?
-        // Or just keep the scores updating. The prompt said "Referans değerleri gösteren çizgiler olsun"
+        // Or just keep the scores updating. The prompt said "Referans deÄŸerleri gÃ¶steren Ã§izgiler olsun"
         // Since the user can change them, let's update the line positions too.
 
         window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin); // Show Kadin Ref Line
