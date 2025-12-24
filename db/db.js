@@ -5,11 +5,14 @@ import postgres from 'postgres'
 // This is required for Serverless Functions to prevent connection exhaustion/500 errors.
 const connectionString = process.env.DATABASE_URL
 
-const sql = postgres(connectionString, {
-    prepare: false, // Required for Transaction Mode
-    ssl: {
-        rejectUnauthorized: false // Fixes SSL handshake issues
-    }
-})
 
-export default sql
+import dotenv from "dotenv";
+
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
+
+const sql = postgres(process.env.DATABASE_URL, { ssl: "require" });
+
+export default sql;
+

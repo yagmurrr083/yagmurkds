@@ -1,170 +1,314 @@
-<!-- SECTION 1: INFO CARDS -->
-<div class="row g-4 mb-5">
-    <!-- Card 1: Tahmini Getiri (ML) -->
-    <div class="col-md-4">
-        <div class="card h-100 position-relative border-start border-5 border-success">
-            <div class="card-body text-center d-flex flex-column justify-content-center p-4">
-                <div class="mb-2 text-success opacity-75">
-                    <i class="fas fa-chart-line fa-2x"></i>
-                </div>
-                <h6 class="text-muted text-uppercase fw-bold ls-1">Tahmini Yıllık Getiri</h6>
-                <!-- Maintained ID 'val-tahmini-getiri' for JS compatibility -->
-                <h2 class="display-6 fw-bold text-dark my-2" id="val-tahmini-getiri">
-                    <%= new Intl.NumberFormat('tr-TR', { style: 'currency' , currency: 'TRY' }).format(getiri || 0) %>
-                </h2>
-                <div class="badge bg-light text-dark border mt-2 py-2 px-3 rounded-pill">
-                    <i class="fas fa-brain text-primary me-1"></i>
-                    Makine Öğrenmesi Destekli Analiz
-                    <br>
-                    <small class="text-muted fw-normal" id="label-margin-rate">(Marj Öngörüsü: %<%= marginRate %>
-                            )</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card 2: Kadın Girişimci Bütçesi -->
-    <div class="col-md-4">
-        <div class="card h-100 position-relative border-start border-5 border-info">
-            <div class="card-body text-center d-flex flex-column justify-content-center p-4">
-                <div class="mb-2 text-info opacity-75">
-                    <i class="fas fa-hand-holding-heart fa-2x"></i>
-                </div>
-                <h6 class="text-muted text-uppercase fw-bold ls-1">Kadın Girişimci Bütçesi</h6>
-                <!-- Maintained ID 'val-kadin-butcesi' for JS compatibility -->
-                <h2 class="display-6 fw-bold text-dark my-2" id="val-kadin-butcesi">
-                    <%= new Intl.NumberFormat('tr-TR', { style: 'currency' , currency: 'TRY' }).format(butce || 0) %>
-                </h2>
-                <div class="mt-2 text-muted small">
-                    <i class="fas fa-info-circle me-1"></i>
-                    Net Karın <strong>%72</strong>'si tahsis edilir.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card 3: Reference Firma -->
-    <div class="col-md-4">
-        <div class="card h-100 bg-corporate text-white">
-            <div class="card-body text-center d-flex flex-column justify-content-center p-4">
-                <h6 class="text-white-50 text-uppercase fw-bold mb-3">Analiz Edilen Firma</h6>
-                <h3 class="fw-bold mb-4" id="selected-firm-name">
-                    <%= (activeFirm && (activeFirm.firma_adi || activeFirm.ad)) ? (activeFirm.firma_adi ||
-                        activeFirm.ad) : 'Firma Seçilmedi' %>
-                </h3>
-                <!-- Maintained ID 'referenceFirmModal' for compatibility -->
-                <button class="btn btn-light text-corporate fw-bold w-75 mx-auto rounded-pill shadow-sm"
-                    data-bs-toggle="modal" data-bs-target="#referenceFirmModal">
-                    <i class="fas fa-exchange-alt me-2"></i>Firma Değiştir
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SECTION 2: CHARTS (Middle Row) -->
-<div class="row g-4 mb-5">
-    <!-- Sustainability Leaders (Pie) -->
-    <div class="col-md-5">
-        <div class="card h-100">
-            <div class="card-header bg-transparent fw-bold text-sabanci">Sürdürülebilirlik Liderleri (Puan)</div>
-            <div class="card-body">
-                <div class="chart-container" style="height: 300px; position: relative;">
-                    <canvas id="chartLeaders"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Carbon Footprint Trend (Line) -->
-    <div class="col-md-7">
-        <div class="card h-100">
-            <div
-                class="card-header bg-transparent fw-bold text-sabanci d-flex justify-content-between align-items-center">
-                <span>Karbon Ayak İzi Trendi</span>
-                <div class="d-flex align-items-center gap-2">
-                    <label for="thresholdInput" class="small text-muted mb-0">Eşik Değeri:</label>
-                    <input type="number" id="thresholdInput" class="form-control form-control-sm" style="width: 100px;"
-                        value="<%= karbonEsik %>">
-                    <button class="btn btn-sm btn-outline-secondary" id="btnUpdateThreshold">Güncelle</button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="chart-container" style="height: 300px; position: relative;">
-                    <canvas id="chartCarbon"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SECTION 3: ENTREPRENEUR ANALYSIS (Bottom Row) -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-transparent fw-bold text-sabanci">Girişimci Uyumluluk Analizi</div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-9">
-                        <div class="chart-container" style="height: 400px;">
-                            <canvas id="chartEntrepreneurs"></canvas>
-                        </div>
+<div class="container-fluid">
+    <!-- Top Cards Section -->
+    <div class="row g-4 mb-4">
+        <!-- Card 1: Estimated Return -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-white">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted text-uppercase">Tahmini Getiri</h6>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h2 class="card-title text-primary fw-bold mb-0" id="tahmini-getiri-value">₺0</h2>
+                        <i class="fas fa-chart-line fa-2x text-primary opacity-25"></i>
                     </div>
-                    <div class="col-md-3 border-start">
-                        <h6 class="mb-4">Analiz Ağırlıkları</h6>
+                    <small class="text-muted" id="secilen-firma-adi">Firma Seçiniz</small>
+                </div>
+            </div>
+        </div>
 
-                        <div class="mb-4">
-                            <label for="w1" class="form-label d-flex justify-content-between">
-                                <span>Kadın Çalışan Oranı</span>
-                                <span id="val-w1" class="fw-bold">50</span>
-                            </label>
-                            <input type="range" class="form-range" id="w1" min="0" max="100" value="50">
-                        </div>
+        <!-- Card 2: Women Entrepreneur Budget (72%) -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-white">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted text-uppercase">Kadın Girişimci Bütçesi (%72)</h6>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h2 class="card-title text-success fw-bold mb-0" id="kadin-butce-value">₺0</h2>
+                        <i class="fas fa-hand-holding-dollar fa-2x text-success opacity-25"></i>
+                    </div>
+                    <small class="text-success">Otomatik Hesaplanır</small>
+                </div>
+            </div>
+        </div>
 
-                        <div class="mb-4">
-                            <label for="w2" class="form-label d-flex justify-content-between">
-                                <span>Engelli Çalışan Oranı</span>
-                                <span id="val-w2" class="fw-bold">30</span>
-                            </label>
-                            <input type="range" class="form-range" id="w2" min="0" max="100" value="30">
-                        </div>
+        <!-- Card 3: Firm Selector -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-gradient-primary text-white"
+                style="background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h6 class="card-subtitle mb-3 text-white-50 text-uppercase">Firma Seçimi</h6>
+                    <select class="form-select form-select-lg border-0 shadow-sm" id="firma-select">
+                        <option value="" disabled selected>Firma Seçiniz...</option>
+                        <% data.firms.forEach(function(f) { %>
+                            <option value="<%= f.tahmini_getiri %>" data-ad="<%= f.ad %>">
+                                <%= f.ad %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <div class="mb-4">
-                            <label for="w3" class="form-label d-flex justify-content-between">
-                                <span>Kuruluş Yılı (Yenilik)</span>
-                                <span id="val-w3" class="fw-bold">20</span>
-                            </label>
-                            <input type="range" class="form-range" id="w3" min="0" max="100" value="20">
-                        </div>
+    <!-- Charts Section Row 1: Pie & Line -->
+    <div class="row g-4 mb-4">
+        <!-- Pie Chart: Sustainability Score -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Sürdürülebilirlik Uyum Puanı (Top 7)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="sustainabilityPieChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
 
-                        <div class="alert alert-info small">
-                            <i class="bi bi-info-circle"></i> Ağırlıkları değiştirerek analiz sonuçlarını anlık olarak
-                            güncelleyebilirsiniz.
+        <!-- Line Chart: Recycling Rate -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Atık Geri Dönüşüm Oranı (Top 10)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="recyclingLineChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section Row 2: Bar Chart with Controls -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div
+                    class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Girişimci Uyumluluk Analizi</h5>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#referenceControls" aria-expanded="false">
+                        <i class="fas fa-sliders-h me-1"></i> Referans Değerleri
+                    </button>
+                </div>
+                <!-- Interactive Controls -->
+                <div class="collapse show px-4 pb-3" id="referenceControls">
+                    <div class="card card-body bg-light border-0">
+                        <div class="row align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Kadın Çalışan Oranı Ref.</label>
+                                <input type="range" class="form-range" id="ref-kadin" min="0" max="100" value="50"
+                                    oninput="updateBarChart()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>0%</span>
+                                    <span id="label-ref-kadin">50%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Engelli Çalışan Oranı Ref.</label>
+                                <input type="range" class="form-range" id="ref-engelli" min="0" max="100" value="30"
+                                    oninput="updateBarChart()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>0%</span>
+                                    <span id="label-ref-engelli">30%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Kuruluş Yılı Ref.</label>
+                                <input type="range" class="form-range" id="ref-yil" min="2000" max="2025" value="2015"
+                                    oninput="updateBarChart()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>2000</span>
+                                    <span id="label-ref-yil">2015</span>
+                                    <span>2025</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Reference Firm Modal -->
-<div class="modal fade" id="referenceFirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Referans Firma Seç</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-0">
-                <div class="list-group list-group-flush" id="firmList">
-                    <!-- Loaded via AJAX -->
-                    <div class="text-center p-4">
-                        <div class="spinner-border text-primary" role="status"></div>
-                    </div>
+                <div class="card-body">
+                    <canvas id="compatibilityBarChart" style="max-height: 400px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Data from Server -->
+<script>
+    const pieDataRaw = <% - JSON.stringify(data.charts.pie) %>;
+    const lineDataRaw = <% - JSON.stringify(data.charts.line) %>;
+    const barDataRaw = <% - JSON.stringify(data.charts.bar) %>;
+
+    // Currency Formatter
+    const currencyFormatter = new Intl.NumberFormat('tr-TR', {
+        style: 'currency',
+        currency: 'TRY',
+        maximumFractionDigits: 0
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- 1. Card Logic ---
+        const firmaSelect = document.getElementById('firma-select');
+        const tahminiGetiriEl = document.getElementById('tahmini-getiri-value');
+        const kadinButceEl = document.getElementById('kadin-butce-value');
+        const selectedFirmaLabel = document.getElementById('secilen-firma-adi');
+
+        firmaSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const getiri = parseFloat(this.value);
+            const firmaAd = selectedOption.getAttribute('data-ad');
+
+            if (!isNaN(getiri)) {
+                tahminiGetiriEl.textContent = currencyFormatter.format(getiri);
+                kadinButceEl.textContent = currencyFormatter.format(getiri * 0.72);
+                selectedFirmaLabel.textContent = firmaAd;
+            }
+        });
+
+        // Trigger generic selection if data exists
+        if (firmaSelect.options.length > 1) {
+            firmaSelect.selectedIndex = 1;
+            firmaSelect.dispatchEvent(new Event('change'));
+        }
+
+
+        // --- 2. Chart Configurations ---
+
+        // Pie Chart
+        new Chart(document.getElementById('sustainabilityPieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: pieDataRaw.map(d => d.ad),
+                datasets: [{
+                    data: pieDataRaw.map(d => d.surdurulebilirlik_uyum_puani),
+                    backgroundColor: [
+                        '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // Line Chart
+        new Chart(document.getElementById('recyclingLineChart'), {
+            type: 'line',
+            data: {
+                labels: lineDataRaw.map(d => d.ad),
+                datasets: [{
+                    label: 'Geri Dönüşüm Oranı (%)',
+                    data: lineDataRaw.map(d => d.geri_donusum_orani), // Assuming raw value like 0.45 or 45
+                    borderColor: '#1cc88a',
+                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Bar Chart (Interactive)
+        window.ctxBar = document.getElementById('compatibilityBarChart').getContext('2d');
+        window.chartBar = new Chart(window.ctxBar, {
+            type: 'bar',
+            data: {
+                labels: barDataRaw.map(d => d.isletme_adi),
+                datasets: [{
+                    label: 'Kriter Uyumluluk Puanı',
+                    data: barDataRaw.map(d => d.kriter_uyumluluk_puani),
+                    backgroundColor: '#4e73df',
+                    order: 2
+                },
+                // Reference Lines (Simulated as Line Datasets)
+                {
+                    label: 'Ref: Kadın Çalışan',
+                    data: Array(barDataRaw.length).fill(50),
+                    type: 'line',
+                    borderColor: '#f6c23e',
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    order: 1
+                },
+                {
+                    label: 'Ref: Engelli Çalışan',
+                    data: Array(barDataRaw.length).fill(30),
+                    type: 'line',
+                    borderColor: '#e74a3b',
+                    borderDash: [2, 2],
+                    pointRadius: 0,
+                    order: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            }
+        });
+    });
+
+    // --- Interactive Bar Chart Update Logic ---
+    window.updateBarChart = function () {
+        const refKadin = parseInt(document.getElementById('ref-kadin').value);
+        const refEngelli = parseInt(document.getElementById('ref-engelli').value);
+        const refYil = parseInt(document.getElementById('ref-yil').value);
+
+        // Update Labels
+        document.getElementById('label-ref-kadin').innerText = refKadin + '%';
+        document.getElementById('label-ref-engelli').innerText = refEngelli + '%';
+        document.getElementById('label-ref-yil').innerText = refYil;
+
+        // Recalculate Scores based on References (Simulation)
+        // Formula assumption: We adjust the score visually based on how close they are to the new reference
+        // Or simply update the reference lines. The user asked "referans değerleri gösteren çizgiler olsun... bar grafiğindeki uyumluluk oranı da değişsin"
+
+        const newData = barDataRaw.map(item => {
+            let baseScore = parseFloat(item.kriter_uyumluluk_puani);
+
+            // Adjust score dynamically:
+            // If they meet the women rate ref, bonus. If not, penalty.
+            const kadinDiff = (item.kadin_calisan_orani || 0) - refKadin;
+            baseScore += (kadinDiff / 2); // Generic weight
+
+            const engelliDiff = (item.engelli_calisan_orani || 0) - refEngelli;
+            baseScore += (engelliDiff * 5); // Higher weight for smaller values
+
+            const yilDiff = (item.kurulus_yili || 2000) - refYil;
+            // If firm is newer than ref year, maybe bonus? Or older? Let's assume newer = better adaptation capability
+            baseScore += (yilDiff / 2);
+
+            // Clamp 0-100
+            return Math.min(100, Math.max(0, Math.round(baseScore)));
+        });
+
+        // Update Chart Data
+        window.chartBar.data.datasets[0].data = newData;
+
+        // Update Reference Lines
+        // We map the reference value directly to the chart scale for visualization? 
+        // Or just keep the scores updating. The prompt said "Referans değerleri gösteren çizgiler olsun"
+        // Since the user can change them, let's update the line positions too.
+
+        window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin); // Show Kadin Ref Line
+        // We can add more lines if needed, but let's stick to updating the main score primarily
+
+        window.chartBar.update();
+    }
+</script>

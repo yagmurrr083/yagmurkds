@@ -1,5 +1,5 @@
 import express from 'express'
-import * as analizController from '../controllers/analizController.js'
+import * as analizController from '../controllers/AnalizController.js'
 import * as firmaController from '../controllers/firmaController.js'
 import * as girisimciController from '../controllers/girisimciController.js'
 
