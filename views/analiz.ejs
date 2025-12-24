@@ -135,8 +135,8 @@
 <!-- Data from Server -->
 <script>
     const pieDataRaw = <% - JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
-    const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;;
-    const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>
+    const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
+    const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
 </script>
 
 <script>
@@ -146,7 +146,8 @@
     const currencyFormatter = new Intl.NumberFormat('tr-TR', {
         style: 'currency',
         currency: 'TRY',
-        maximumFractionDigits: 0
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -158,7 +159,9 @@
 
         firmaSelect.addEventListener('change', function () {
             const selectedOption = this.options[this.selectedIndex];
-            const getiri = parseFloat(this.value);
+            // Handle Turkish decimal separator (comma) if present, or standard dot
+            const rawValue = this.value.toString().replace(/,/g, '.');
+            const getiri = parseFloat(rawValue);
             const firmaAd = selectedOption.getAttribute('data-ad');
 
             if (!isNaN(getiri)) {
