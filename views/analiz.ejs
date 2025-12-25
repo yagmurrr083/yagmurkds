@@ -152,7 +152,7 @@
 
 <!-- Data from Server -->
 <script>
-    // Data Injection (Fixed 2)
+    // Data Injection
     const pieDataRaw = <% - JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
     const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
     const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
@@ -172,7 +172,6 @@
         const kadinButceEl = document.getElementById('kadin-butce-value');
         const selectedFirmaLabel = document.getElementById('secilen-firma-adi');
 
-        // Eğer bu sayfada firma-select yoksa sayfayı çökertme (null addEventListener hatasını çözer)
         if (firmaSelect && tahminiGetiriEl && kadinButceEl && selectedFirmaLabel) {
             firmaSelect.addEventListener('change', function () {
                 const selectedOption = this.options[this.selectedIndex];
@@ -192,8 +191,9 @@
                 firmaSelect.dispatchEvent(new Event('change'));
             }
         } else {
-            console.warn("Card alanları bulunamadı (firma-select vb.). Bu sayfada olmayabilir.");
+            console.warn("Card alanları bulunamadı. Bu sayfada veri olmayabilir.");
         }
+
 
         // --- 2. Chart Configurations ---
 
@@ -203,21 +203,23 @@
             new Chart(pieCanvas, {
                 type: 'doughnut',
                 data: {
-                    labels: (pieDataRaw || []).map(d => d?.ad ?? ''),
+                    labels: pieDataRaw.map(d => d.ad),
                     datasets: [{
-                        data: (pieDataRaw || []).map(d => Number(d?.surdurulebilirlik_uyum_puani ?? 0)),
-                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'],
+                        data: pieDataRaw.map(d => d.surdurulebilirlik_uyum_puani),
+                        backgroundColor: [
+                            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'
+                        ],
                         hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right' } }
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
                 }
             });
-        } else {
-            console.warn("Pie chart canvas veya Chart.js bulunamadı (sustainabilityPieChart).");
         }
 
         // Line Chart
@@ -227,18 +229,20 @@
             window.chartLine = new Chart(window.ctxLine, {
                 type: 'line',
                 data: {
-                    labels: (lineDataRaw || []).map(d => d?.ad ?? ''),
+                    labels: lineDataRaw.map(d => d.ad),
                     datasets: [{
                         label: 'Geri Dönüşüm Oranı (%)',
-                        data: (lineDataRaw || []).map(d => Number(d?.geri_donusum_orani ?? 0)),
+                        data: lineDataRaw.map(d => d.geri_donusum_orani),
                         borderColor: '#1cc88a',
                         backgroundColor: 'rgba(28, 200, 138, 0.1)',
                         tension: 0.3,
                         fill: true,
                         order: 2
-                    }, {
+                    },
+                    // Reference Line (Recycling)
+                    {
                         label: 'Hedef Oran',
-                        data: Array((lineDataRaw || []).length).fill(50),
+                        data: Array(lineDataRaw.length).fill(50), // Initial default
                         borderColor: '#e74a3b',
                         borderDash: [5, 5],
                         pointRadius: 0,
@@ -250,125 +254,147 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, max: 100 } }
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
                 }
             });
-        } else {
-            console.warn("Line chart canvas veya Chart.js bulunamadı (recyclingLineChart).");
         }
 
-        // Bar Chart
+        // Bar Chart (Interactive)
         const barCanvas = document.getElementById('compatibilityBarChart');
         if (barCanvas && window.Chart) {
             window.ctxBar = barCanvas.getContext('2d');
             window.chartBar = new Chart(window.ctxBar, {
                 type: 'bar',
                 data: {
-                    labels: (barDataRaw || []).map(d => d?.isletme_adi ?? ''),
+                    labels: barDataRaw.map(d => d.isletme_adi),
                     datasets: [{
                         label: 'Kriter Uyumluluk Puanı',
-                        data: (barDataRaw || []).map(d => Number(d?.kriter_uyumluluk_puani ?? 0)),
+                        data: barDataRaw.map(d => d.kriter_uyumluluk_puani),
                         backgroundColor: '#4e73df',
                         order: 3,
                         yAxisID: 'y'
-                    }, {
+                    },
+                    // Reference Lines
+                    {
                         label: 'Ref: Kadın Çalışan (%)',
-                        data: Array((barDataRaw || []).length).fill(50),
+                        data: Array(barDataRaw.length).fill(50),
                         type: 'line',
                         borderColor: '#f6c23e',
                         borderDash: [5, 5],
                         pointRadius: 0,
                         order: 1,
                         yAxisID: 'y'
-                    }, {
+                    },
+                    {
                         label: 'Ref: Engelli Çalışan (%)',
-                        data: Array((barDataRaw || []).length).fill(30),
+                        data: Array(barDataRaw.length).fill(30),
                         type: 'line',
                         borderColor: '#e74a3b',
                         borderDash: [2, 2],
                         pointRadius: 0,
                         order: 1,
                         yAxisID: 'y'
-                    }, {
+                    },
+                    {
                         label: 'Ref: Kuruluş Yılı',
-                        data: Array((barDataRaw || []).length).fill(2015),
+                        data: Array(barDataRaw.length).fill(2015),
                         type: 'line',
                         borderColor: '#36b9cc',
                         borderDash: [10, 5],
                         pointRadius: 0,
                         order: 1,
-                        yAxisID: 'y1'
+                        yAxisID: 'y1' // Secondary Axis
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Puan / Oran (%)' } },
-                        y1: { type: 'linear', display: true, position: 'right', min: 2000, max: 2025, grid: { drawOnChartArea: false }, title: { display: true, text: 'Kuruluş Yılı' } }
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Puan / Oran (%)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 2000,
+                            max: 2025,
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Kuruluş Yılı' }
+                        }
                     },
-                    interaction: { mode: 'index', intersect: false }
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    }
                 }
             });
-        } else {
-            console.warn("Bar chart canvas veya Chart.js bulunamadı (compatibilityBarChart).");
         }
     });
 
     // --- Interactive Updates ---
 
+    // 1. Line Chart Update
     window.updateLineChart = function () {
         if (!window.chartLine) return;
         const slider = document.getElementById('ref-recycling');
         const label = document.getElementById('label-ref-recycling');
         if (!slider || !label) return;
 
-        const refVal = parseInt(slider.value, 10);
+        const refVal = parseInt(slider.value);
         label.innerText = refVal + '%';
 
-        window.chartLine.data.datasets[1].data = Array((lineDataRaw || []).length).fill(refVal);
+        // Update Reference Line Data
+        window.chartLine.data.datasets[1].data = Array(lineDataRaw.length).fill(refVal);
         window.chartLine.update();
-    };
+    }
 
+    // 2. Bar Chart Update
     window.updateBarChart = function () {
         if (!window.chartBar) return;
 
-        const elKadin = document.getElementById('ref-kadin');
-        const elEngelli = document.getElementById('ref-engelli');
-        const elYil = document.getElementById('ref-yil');
-        if (!elKadin || !elEngelli || !elYil) return;
+        const refKadin = parseInt(document.getElementById('ref-kadin').value);
+        const refEngelli = parseInt(document.getElementById('ref-engelli').value);
+        const refYil = parseInt(document.getElementById('ref-yil').value);
 
-        const refKadin = parseInt(elKadin.value, 10);
-        const refEngelli = parseInt(elEngelli.value, 10);
-        const refYil = parseInt(elYil.value, 10);
+        // Update Labels
+        const lblKadin = document.getElementById('label-ref-kadin');
+        if (lblKadin) lblKadin.innerText = refKadin + '%';
 
-        const labelKadin = document.getElementById('label-ref-kadin');
-        const labelEngelli = document.getElementById('label-ref-engelli');
-        const labelYil = document.getElementById('label-ref-yil');
-        if (labelKadin) labelKadin.innerText = refKadin + '%';
-        if (labelEngelli) labelEngelli.innerText = refEngelli + '%';
-        if (labelYil) labelYil.innerText = refYil;
+        const lblEngelli = document.getElementById('label-ref-engelli');
+        if (lblEngelli) lblEngelli.innerText = refEngelli + '%';
 
-        const newData = (barDataRaw || []).map(item => {
-            let baseScore = parseFloat(item?.kriter_uyumluluk_puani ?? 0);
+        const lblYil = document.getElementById('label-ref-yil');
+        if (lblYil) lblYil.innerText = refYil;
 
-            const kadinDiff = (item?.kadin_calisan_orani ?? 0) - refKadin;
+        // Recalculate Scores
+        const newData = barDataRaw.map(item => {
+            let baseScore = parseFloat(item.kriter_uyumluluk_puani);
+
+            const kadinDiff = (item.kadin_calisan_orani || 0) - refKadin;
             baseScore += (kadinDiff / 2);
 
-            const engelliDiff = (item?.engelli_calisan_orani ?? 0) - refEngelli;
+            const engelliDiff = (item.engelli_calisan_orani || 0) - refEngelli;
             baseScore += (engelliDiff * 5);
 
-            const yilDiff = (item?.kurulus_yili ?? 2000) - refYil;
+            const yilDiff = (item.kurulus_yili || 2000) - refYil;
             baseScore += (yilDiff / 2);
 
             return Math.min(100, Math.max(0, Math.round(baseScore)));
         });
 
+        // Update Main Data
         window.chartBar.data.datasets[0].data = newData;
-        window.chartBar.data.datasets[1].data = Array((barDataRaw || []).length).fill(refKadin);
-        window.chartBar.data.datasets[2].data = Array((barDataRaw || []).length).fill(refEngelli);
-        window.chartBar.data.datasets[3].data = Array((barDataRaw || []).length).fill(refYil);
+
+        // Update Reference Lines
+        window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin);
+        window.chartBar.data.datasets[2].data = Array(barDataRaw.length).fill(refEngelli);
+        window.chartBar.data.datasets[3].data = Array(barDataRaw.length).fill(refYil);
 
         window.chartBar.update();
-    };
+    }
 </script>
