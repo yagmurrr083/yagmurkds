@@ -152,6 +152,11 @@
 
 <!-- Data from Server -->
 <script>
+    // Data Injection
+    const pieDataRaw = <% - JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
+    const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
+    const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
+
     // Currency Formatter
     const currencyFormatter = new Intl.NumberFormat('tr-TR', {
         style: 'currency',
