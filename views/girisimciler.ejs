@@ -25,7 +25,11 @@
                             <%= g.isletme_adi %>
                         </td>
                         <td class="text-end font-monospace">
-                            <%= new Intl.NumberFormat('tr-TR').format(g.talep_butcesi) %> TL
+                            <% if (g.talep_butcesi && !isNaN(g.talep_butcesi)) { %>
+                                <%= new Intl.NumberFormat('tr-TR').format(g.talep_butcesi) %> TL
+                                    <% } else { %>
+                                        <span class="text-muted">-</span>
+                                        <% } %>
                         </td>
                         <td class="text-center">%<%= (g.kadin_calisan_orani * 100).toFixed(0) %>
                         </td>
