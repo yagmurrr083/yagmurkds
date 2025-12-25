@@ -8,6 +8,7 @@ export const getAnalizPage = async (req, res) => {
             SELECT 
                 f.id, 
                 f.ad, 
+                f.ciro,
                 ft.tahmini_getiri
             FROM firmalar f
             LEFT JOIN firma_tahminleme ft ON f.id = ft.firma_id
@@ -36,7 +37,7 @@ export const getAnalizPage = async (req, res) => {
             LIMIT 10
         `;
 
-        // --- 4. Bar Chart: Top 7 Entrepreneur Compatibility ---
+        // --- 4. Bar Chart: Top 10 Entrepreneur Compatibility ---
         // We need reference values: Women Employee Rate, Disabled Employee Rate, Establishment Year
         const barData = await sql`
             SELECT 
@@ -48,7 +49,7 @@ export const getAnalizPage = async (req, res) => {
             FROM girisimciler g
             JOIN girisimci_tahminleme gt ON g.id = gt.girisimci_id
             ORDER BY gt.kriter_uyumluluk_puani DESC
-            LIMIT 7
+            LIMIT 10
         `;
 
         res.render('layout', {
