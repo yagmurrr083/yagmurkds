@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted text-uppercase">Tahmini Getiri (M)</h6>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h2 class="card-title text-primary fw-bold mb-0" id="tahmini-getiri-value">â‚º0</h2>
+                        <h2 class="card-title text-primary fw-bold mb-0" id="tahmini-getiri-value">₺0</h2>
                         <i class="fas fa-chart-line fa-2x text-primary opacity-25"></i>
                     </div>
                     <small class="text-muted" id="secilen-firma-adi">Firma Seçiniz</small>
@@ -21,7 +21,7 @@
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted text-uppercase">Kadın Girişimci Bütçesi (M)</h6>
                     <div class="d-flex align-items-center justify-content-between">
-                        <h2 class="card-title text-success fw-bold mb-0" id="kadin-butce-value">â‚º0</h2>
+                        <h2 class="card-title text-success fw-bold mb-0" id="kadin-butce-value">₺0</h2>
                         <i class="fas fa-hand-holding-dollar fa-2x text-success opacity-25"></i>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0">SürdürülebilirlikUyum Puanı (Top 7)</h5>
+                    <h5 class="fw-bold mb-0">Sürdürülebilirlik Uyum Puanı (Top 7)</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="sustainabilityPieChart" style="max-height: 300px;"></canvas>
@@ -283,8 +283,8 @@
 
         // Recalculate Scores based on References (Simulation)
         // Formula assumption: We adjust the score visually based on how close they are to the new reference
-        // Or simply update the reference lines. The user asked "referans deÄŸerleri gÃ¶steren Ã§izgiler olsun... bar grafiÄŸindeki
-        //uyumluluk oranÄ± da deÄŸiÅŸsin"
+        // Or simply update the reference lines. The user asked "referans değerleri gösteren çizgiler olsun... bar grafiğindeki
+        //uyumluluk oranı da değişsin"
 
         const newData = barDataRaw.map(item => {
             let baseScore = parseFloat(item.kriter_uyumluluk_puani);
@@ -310,7 +310,7 @@
 
         // Update Reference Lines
         // We map the reference value directly to the chart scale for visualization?
-        // Or just keep the scores updating. The prompt said "Referans deÄŸerleri gÃ¶steren Ã§izgiler olsun"
+        // Or just keep the scores updating. The prompt said "Referans değerleri gösteren çizgiler olsun"
         // Since the user can change them, let's update the line positions too.
 
         window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin); // Show Kadin Ref Line
