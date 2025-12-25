@@ -64,8 +64,27 @@
         <!-- Line Chart: Recycling Rate -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <div
+                    class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold mb-0">Atık Geri Dönüşüm Oranı (Top 10)</h5>
+                    <!-- Toggle for Recycling Controls -->
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#recyclingControls" aria-expanded="false">
+                        <i class="fas fa-sliders-h me-1"></i> Hedef
+                    </button>
+                </div>
+                <!-- Interactive Controls for Recycling -->
+                <div class="collapse px-4 pb-2" id="recyclingControls">
+                    <div class="card card-body bg-light border-0 py-2">
+                        <label class="form-label small fw-bold">Geri Dönüşüm Hedefi (%)</label>
+                        <input type="range" class="form-range" id="ref-recycling" min="0" max="100" value="50"
+                            oninput="updateLineChart()">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>0%</span>
+                            <span id="label-ref-recycling">50%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <canvas id="recyclingLineChart" style="max-height: 300px;"></canvas>
@@ -111,7 +130,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">Kuruluş Yılı Ref.</label>
+                                <label class="form-label small fw-bold">Kuruluş Yılı Ref. (Min Yıl)</label>
                                 <input type="range" class="form-range" id="ref-yil" min="2000" max="2025" value="2015"
                                     oninput="updateBarChart()">
                                 <div class="d-flex justify-content-between small text-muted">
@@ -133,9 +152,9 @@
 
 <!-- Data from Server -->
 <script>
-    const pieDataRaw = <%- JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
-    const lineDataRaw = <%- JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
-    const barDataRaw = <%- JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
+    const pieDataRaw = <% - JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
+    const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
+    const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
 </script>
 
 <script>
@@ -202,24 +221,37 @@
         });
 
         // Line Chart
-        new Chart(document.getElementById('recyclingLineChart'), {
+        window.ctxLine = document.getElementById('recyclingLineChart').getContext('2d');
+        window.chartLine = new Chart(window.ctxLine, {
             type: 'line',
             data: {
                 labels: lineDataRaw.map(d => d.ad),
                 datasets: [{
                     label: 'Geri Dönüşüm Oranı (%)',
-                    data: lineDataRaw.map(d => d.geri_donusum_orani), // Assuming raw value like 0.45 or 45
+                    data: lineDataRaw.map(d => d.geri_donusum_orani),
                     borderColor: '#1cc88a',
                     backgroundColor: 'rgba(28, 200, 138, 0.1)',
                     tension: 0.3,
-                    fill: true
+                    fill: true,
+                    order: 2
+                },
+                // Reference Line (Recycling)
+                {
+                    label: 'Hedef Oran',
+                    data: Array(lineDataRaw.length).fill(50), // Initial default
+                    borderColor: '#e74a3b',
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    borderWidth: 2,
+                    fill: false,
+                    order: 1
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true }
+                    y: { beginAtZero: true, max: 100 }
                 }
             }
         });
@@ -234,33 +266,59 @@
                     label: 'Kriter Uyumluluk Puanı',
                     data: barDataRaw.map(d => d.kriter_uyumluluk_puani),
                     backgroundColor: '#4e73df',
-                    order: 2
+                    order: 3,
+                    yAxisID: 'y'
                 },
-                // Reference Lines (Simulated as Line Datasets)
+                // Reference Lines
                 {
-                    label: 'Ref: Kadın Çalışan',
+                    label: 'Ref: Kadın Çalışan (%)',
                     data: Array(barDataRaw.length).fill(50),
                     type: 'line',
                     borderColor: '#f6c23e',
                     borderDash: [5, 5],
                     pointRadius: 0,
-                    order: 1
+                    order: 1,
+                    yAxisID: 'y'
                 },
                 {
-                    label: 'Ref: Engelli Çalışan',
+                    label: 'Ref: Engelli Çalışan (%)',
                     data: Array(barDataRaw.length).fill(30),
                     type: 'line',
                     borderColor: '#e74a3b',
                     borderDash: [2, 2],
                     pointRadius: 0,
-                    order: 1
+                    order: 1,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Ref: Kuruluş Yılı',
+                    data: Array(barDataRaw.length).fill(2015),
+                    type: 'line',
+                    borderColor: '#36b9cc',
+                    borderDash: [10, 5],
+                    pointRadius: 0,
+                    order: 1,
+                    yAxisID: 'y1' // Secondary Axis
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true, max: 100 }
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: { display: true, text: 'Puan / Oran (%)' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        min: 2000,
+                        max: 2025,
+                        grid: { drawOnChartArea: false },
+                        title: { display: true, text: 'Kuruluş Yılı' }
+                    }
                 },
                 interaction: {
                     mode: 'index',
@@ -270,7 +328,19 @@
         });
     });
 
-    // --- Interactive Bar Chart Update Logic ---
+    // --- Interactive Updates ---
+
+    // 1. Line Chart Update
+    window.updateLineChart = function () {
+        const refVal = parseInt(document.getElementById('ref-recycling').value);
+        document.getElementById('label-ref-recycling').innerText = refVal + '%';
+
+        // Update Reference Line Data
+        window.chartLine.data.datasets[1].data = Array(lineDataRaw.length).fill(refVal);
+        window.chartLine.update();
+    }
+
+    // 2. Bar Chart Update
     window.updateBarChart = function () {
         const refKadin = parseInt(document.getElementById('ref-kadin').value);
         const refEngelli = parseInt(document.getElementById('ref-engelli').value);
@@ -281,40 +351,31 @@
         document.getElementById('label-ref-engelli').innerText = refEngelli + '%';
         document.getElementById('label-ref-yil').innerText = refYil;
 
-        // Recalculate Scores based on References (Simulation)
-        // Formula assumption: We adjust the score visually based on how close they are to the new reference
-        // Or simply update the reference lines. The user asked "referans değerleri gösteren çizgiler olsun... bar grafiğindeki
-        //uyumluluk oranı da değişsin"
-
+        // Recalculate Scores
         const newData = barDataRaw.map(item => {
             let baseScore = parseFloat(item.kriter_uyumluluk_puani);
 
-            // Adjust score dynamically:
-            // If they meet the women rate ref, bonus. If not, penalty.
             const kadinDiff = (item.kadin_calisan_orani || 0) - refKadin;
-            baseScore += (kadinDiff / 2); // Generic weight
+            baseScore += (kadinDiff / 2);
 
             const engelliDiff = (item.engelli_calisan_orani || 0) - refEngelli;
-            baseScore += (engelliDiff * 5); // Higher weight for smaller values
+            baseScore += (engelliDiff * 5);
 
             const yilDiff = (item.kurulus_yili || 2000) - refYil;
-            // If firm is newer than ref year, maybe bonus? Or older? Let's assume newer = better adaptation capability
+            // logic: older firms might be penalized or newer rewarded, keeping simple logic:
+            // if firm is newer than ref year, gain points
             baseScore += (yilDiff / 2);
 
-            // Clamp 0-100
             return Math.min(100, Math.max(0, Math.round(baseScore)));
         });
 
-        // Update Chart Data
+        // Update Main Data
         window.chartBar.data.datasets[0].data = newData;
 
         // Update Reference Lines
-        // We map the reference value directly to the chart scale for visualization?
-        // Or just keep the scores updating. The prompt said "Referans değerleri gösteren çizgiler olsun"
-        // Since the user can change them, let's update the line positions too.
-
-        window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin); // Show Kadin Ref Line
-        // We can add more lines if needed, but let's stick to updating the main score primarily
+        window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin);
+        window.chartBar.data.datasets[2].data = Array(barDataRaw.length).fill(refEngelli);
+        window.chartBar.data.datasets[3].data = Array(barDataRaw.length).fill(refYil);
 
         window.chartBar.update();
     }
