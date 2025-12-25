@@ -1,11 +1,156 @@
-<!-- Data from Server -->
-<script>
-    // Force Update: Recreated File
-    const pieDataRaw = <% - JSON.stringify((data && data.charts && data.charts.pie) ? data.charts.pie : []) %>;
-    const lineDataRaw = <% - JSON.stringify((data && data.charts && data.charts.line) ? data.charts.line : []) %>;
-    const barDataRaw = <% - JSON.stringify((data && data.charts && data.charts.bar) ? data.charts.bar : []) %>;
-</script>
+<div class="container-fluid">
+    <!-- Top Cards Section -->
+    <div class="row g-4 mb-4">
+        <!-- Card 1: Estimated Return -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-white">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted text-uppercase">Tahmini Getiri (M)</h6>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h2 class="card-title text-primary fw-bold mb-0" id="tahmini-getiri-value">₺0</h2>
+                        <i class="fas fa-chart-line fa-2x text-primary opacity-25"></i>
+                    </div>
+                    <small class="text-muted" id="secilen-firma-adi">Firma Seçiniz</small>
+                </div>
+            </div>
+        </div>
 
+        <!-- Card 2: Women Entrepreneur Budget (72%) -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-white">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted text-uppercase">Kadın Girişimci Bütçesi (M)</h6>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h2 class="card-title text-success fw-bold mb-0" id="kadin-butce-value">₺0</h2>
+                        <i class="fas fa-hand-holding-dollar fa-2x text-success opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Firm Selector -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-gradient-primary text-white"
+                style="background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h6 class="card-subtitle mb-3 text-white-50 text-uppercase">Firma Seçiniz</h6>
+                    <select class="form-select form-select-lg border-0 shadow-sm" id="firma-select">
+                        <option value="" disabled selected>Firma Seçiniz...</option>
+                        <% data.firms.forEach(function(f) { %>
+                            <option value="<%= f.tahmini_getiri %>" data-ad="<%= f.ad %>">
+                                <%= f.ad %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section Row 1: Pie & Line -->
+    <div class="row g-4 mb-4">
+        <!-- Pie Chart: Sustainability Score -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Sürdürülebilirlik Uyum Puanı (Top 7)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="sustainabilityPieChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Chart: Recycling Rate -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div
+                    class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Atık Geri Dönüşüm Oranı (Top 10)</h5>
+                    <!-- Toggle for Recycling Controls -->
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#recyclingControls" aria-expanded="false">
+                        <i class="fas fa-sliders-h me-1"></i> Hedef
+                    </button>
+                </div>
+                <!-- Interactive Controls for Recycling -->
+                <div class="collapse px-4 pb-2" id="recyclingControls">
+                    <div class="card card-body bg-light border-0 py-2">
+                        <label class="form-label small fw-bold">Geri Dönüşüm Hedefi (%)</label>
+                        <input type="range" class="form-range" id="ref-recycling" min="0" max="100" value="50"
+                            oninput="updateLineChart()">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>0%</span>
+                            <span id="label-ref-recycling">50%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="recyclingLineChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section Row 2: Bar Chart with Controls -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div
+                    class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Girişimci Uyumluluk Analizi</h5>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#referenceControls" aria-expanded="false">
+                        <i class="fas fa-sliders-h me-1"></i> Referans Değerleri
+                    </button>
+                </div>
+                <!-- Interactive Controls -->
+                <div class="collapse show px-4 pb-3" id="referenceControls">
+                    <div class="card card-body bg-light border-0">
+                        <div class="row align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Kadın Çalışan Oranı Ref.</label>
+                                <input type="range" class="form-range" id="ref-kadin" min="0" max="100" value="50"
+                                    oninput="updateBarChart()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>0%</span>
+                                    <span id="label-ref-kadin">50%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Engelli Çalışan Oranı Ref.</label>
+                                <input type="range" class="form-range" id="ref-engelli" min="0" max="100" value="30"
+                                    oninput="updateBarChart()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>0%</span>
+                                    <span id="label-ref-engelli">30%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Kuruluş Yılı Ref. (Min Yıl)</label>
+                                <input type="range" class="form-range" id="ref-yil" min="2000" max="2025" value="2015"
+                                    oninput="updateBarChart()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>2000</span>
+                                    <span id="label-ref-yil">2015</span>
+                                    <span>2025</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="compatibilityBarChart" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data from Server -->
 <script>
     // Currency Formatter
     const currencyFormatter = new Intl.NumberFormat('tr-TR', {
@@ -22,204 +167,202 @@
         const kadinButceEl = document.getElementById('kadin-butce-value');
         const selectedFirmaLabel = document.getElementById('secilen-firma-adi');
 
-        firmaSelect.addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
-            // Handle Turkish decimal separator (comma) if present, or standard dot
-            const rawValue = this.value.toString().replace(/,/g, '.');
-            const getiri = parseFloat(rawValue);
-            const firmaAd = selectedOption.getAttribute('data-ad');
+        // Eğer bu sayfada firma-select yoksa sayfayı çökertme (null addEventListener hatasını çözer)
+        if (firmaSelect && tahminiGetiriEl && kadinButceEl && selectedFirmaLabel) {
+            firmaSelect.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const rawValue = this.value.toString().replace(/,/g, '.');
+                const getiri = parseFloat(rawValue);
+                const firmaAd = selectedOption.getAttribute('data-ad');
 
-            if (!isNaN(getiri)) {
-                tahminiGetiriEl.textContent = currencyFormatter.format(getiri);
-                kadinButceEl.textContent = currencyFormatter.format(getiri * 0.72);
-                selectedFirmaLabel.textContent = firmaAd;
+                if (!isNaN(getiri)) {
+                    tahminiGetiriEl.textContent = currencyFormatter.format(getiri);
+                    kadinButceEl.textContent = currencyFormatter.format(getiri * 0.72);
+                    selectedFirmaLabel.textContent = firmaAd;
+                }
+            });
+
+            if (firmaSelect.options.length > 1) {
+                firmaSelect.selectedIndex = 1;
+                firmaSelect.dispatchEvent(new Event('change'));
             }
-        });
-
-        // Trigger generic selection if data exists
-        if (firmaSelect.options.length > 1) {
-            firmaSelect.selectedIndex = 1;
-            firmaSelect.dispatchEvent(new Event('change'));
+        } else {
+            console.warn("Card alanları bulunamadı (firma-select vb.). Bu sayfada olmayabilir.");
         }
 
         // --- 2. Chart Configurations ---
 
         // Pie Chart
-        new Chart(document.getElementById('sustainabilityPieChart'), {
-            type: 'doughnut',
-            data: {
-                labels: pieDataRaw.map(d => d.ad),
-                datasets: [{
-                    data: pieDataRaw.map(d => d.surdurulebilirlik_uyum_puani),
-                    backgroundColor: [
-                        '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'right' }
+        const pieCanvas = document.getElementById('sustainabilityPieChart');
+        if (pieCanvas && window.Chart) {
+            new Chart(pieCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: (pieDataRaw || []).map(d => d?.ad ?? ''),
+                    datasets: [{
+                        data: (pieDataRaw || []).map(d => Number(d?.surdurulebilirlik_uyum_puani ?? 0)),
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right' } }
                 }
-            }
-        });
+            });
+        } else {
+            console.warn("Pie chart canvas veya Chart.js bulunamadı (sustainabilityPieChart).");
+        }
 
         // Line Chart
-        window.ctxLine = document.getElementById('recyclingLineChart').getContext('2d');
-        window.chartLine = new Chart(window.ctxLine, {
-            type: 'line',
-            data: {
-                labels: lineDataRaw.map(d => d.ad),
-                datasets: [{
-                    label: 'Geri Dönüşüm Oranı (%)',
-                    data: lineDataRaw.map(d => d.geri_donusum_orani),
-                    borderColor: '#1cc88a',
-                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
-                    tension: 0.3,
-                    fill: true,
-                    order: 2
+        const lineCanvas = document.getElementById('recyclingLineChart');
+        if (lineCanvas && window.Chart) {
+            window.ctxLine = lineCanvas.getContext('2d');
+            window.chartLine = new Chart(window.ctxLine, {
+                type: 'line',
+                data: {
+                    labels: (lineDataRaw || []).map(d => d?.ad ?? ''),
+                    datasets: [{
+                        label: 'Geri Dönüşüm Oranı (%)',
+                        data: (lineDataRaw || []).map(d => Number(d?.geri_donusum_orani ?? 0)),
+                        borderColor: '#1cc88a',
+                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        order: 2
+                    }, {
+                        label: 'Hedef Oran',
+                        data: Array((lineDataRaw || []).length).fill(50),
+                        borderColor: '#e74a3b',
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        borderWidth: 2,
+                        fill: false,
+                        order: 1
+                    }]
                 },
-                // Reference Line (Recycling)
-                {
-                    label: 'Hedef Oran',
-                    data: Array(lineDataRaw.length).fill(50), // Initial default
-                    borderColor: '#e74a3b',
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    borderWidth: 2,
-                    fill: false,
-                    order: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, max: 100 }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100 } }
                 }
-            }
-        });
+            });
+        } else {
+            console.warn("Line chart canvas veya Chart.js bulunamadı (recyclingLineChart).");
+        }
 
-        // Bar Chart (Interactive)
-        window.ctxBar = document.getElementById('compatibilityBarChart').getContext('2d');
-        window.chartBar = new Chart(window.ctxBar, {
-            type: 'bar',
-            data: {
-                labels: barDataRaw.map(d => d.isletme_adi),
-                datasets: [{
-                    label: 'Kriter Uyumluluk Puanı',
-                    data: barDataRaw.map(d => d.kriter_uyumluluk_puani),
-                    backgroundColor: '#4e73df',
-                    order: 3,
-                    yAxisID: 'y'
+        // Bar Chart
+        const barCanvas = document.getElementById('compatibilityBarChart');
+        if (barCanvas && window.Chart) {
+            window.ctxBar = barCanvas.getContext('2d');
+            window.chartBar = new Chart(window.ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: (barDataRaw || []).map(d => d?.isletme_adi ?? ''),
+                    datasets: [{
+                        label: 'Kriter Uyumluluk Puanı',
+                        data: (barDataRaw || []).map(d => Number(d?.kriter_uyumluluk_puani ?? 0)),
+                        backgroundColor: '#4e73df',
+                        order: 3,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Ref: Kadın Çalışan (%)',
+                        data: Array((barDataRaw || []).length).fill(50),
+                        type: 'line',
+                        borderColor: '#f6c23e',
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        order: 1,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Ref: Engelli Çalışan (%)',
+                        data: Array((barDataRaw || []).length).fill(30),
+                        type: 'line',
+                        borderColor: '#e74a3b',
+                        borderDash: [2, 2],
+                        pointRadius: 0,
+                        order: 1,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Ref: Kuruluş Yılı',
+                        data: Array((barDataRaw || []).length).fill(2015),
+                        type: 'line',
+                        borderColor: '#36b9cc',
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        order: 1,
+                        yAxisID: 'y1'
+                    }]
                 },
-                // Reference Lines
-                {
-                    label: 'Ref: Kadın Çalışan (%)',
-                    data: Array(barDataRaw.length).fill(50),
-                    type: 'line',
-                    borderColor: '#f6c23e',
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    order: 1,
-                    yAxisID: 'y'
-                },
-                {
-                    label: 'Ref: Engelli Çalışan (%)',
-                    data: Array(barDataRaw.length).fill(30),
-                    type: 'line',
-                    borderColor: '#e74a3b',
-                    borderDash: [2, 2],
-                    pointRadius: 0,
-                    order: 1,
-                    yAxisID: 'y'
-                },
-                {
-                    label: 'Ref: Kuruluş Yılı',
-                    data: Array(barDataRaw.length).fill(2015),
-                    type: 'line',
-                    borderColor: '#36b9cc',
-                    borderDash: [10, 5],
-                    pointRadius: 0,
-                    order: 1,
-                    yAxisID: 'y1' // Secondary Axis
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: { display: true, text: 'Puan / Oran (%)' }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Puan / Oran (%)' } },
+                        y1: { type: 'linear', display: true, position: 'right', min: 2000, max: 2025, grid: { drawOnChartArea: false }, title: { display: true, text: 'Kuruluş Yılı' } }
                     },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        min: 2000,
-                        max: 2025,
-                        grid: { drawOnChartArea: false },
-                        title: { display: true, text: 'Kuruluş Yılı' }
-                    }
-                },
-                interaction: {
-                    mode: 'index',
-                    intersect: false
+                    interaction: { mode: 'index', intersect: false }
                 }
-            }
-        });
+            });
+        } else {
+            console.warn("Bar chart canvas veya Chart.js bulunamadı (compatibilityBarChart).");
+        }
     });
 
     // --- Interactive Updates ---
 
-    // 1. Line Chart Update
     window.updateLineChart = function () {
-        const refVal = parseInt(document.getElementById('ref-recycling').value);
-        document.getElementById('label-ref-recycling').innerText = refVal + '%';
+        if (!window.chartLine) return;
+        const slider = document.getElementById('ref-recycling');
+        const label = document.getElementById('label-ref-recycling');
+        if (!slider || !label) return;
 
-        // Update Reference Line Data
-        window.chartLine.data.datasets[1].data = Array(lineDataRaw.length).fill(refVal);
+        const refVal = parseInt(slider.value, 10);
+        label.innerText = refVal + '%';
+
+        window.chartLine.data.datasets[1].data = Array((lineDataRaw || []).length).fill(refVal);
         window.chartLine.update();
     };
 
-    // 2. Bar Chart Update
     window.updateBarChart = function () {
-        const refKadin = parseInt(document.getElementById('ref-kadin').value);
-        const refEngelli = parseInt(document.getElementById('ref-engelli').value);
-        const refYil = parseInt(document.getElementById('ref-yil').value);
+        if (!window.chartBar) return;
 
-        // Update Labels
-        document.getElementById('label-ref-kadin').innerText = refKadin + '%';
-        document.getElementById('label-ref-engelli').innerText = refEngelli + '%';
-        document.getElementById('label-ref-yil').innerText = refYil;
+        const elKadin = document.getElementById('ref-kadin');
+        const elEngelli = document.getElementById('ref-engelli');
+        const elYil = document.getElementById('ref-yil');
+        if (!elKadin || !elEngelli || !elYil) return;
 
-        // Recalculate Scores
-        const newData = barDataRaw.map(item => {
-            let baseScore = parseFloat(item.kriter_uyumluluk_puani);
+        const refKadin = parseInt(elKadin.value, 10);
+        const refEngelli = parseInt(elEngelli.value, 10);
+        const refYil = parseInt(elYil.value, 10);
 
-            const kadinDiff = (item.kadin_calisan_orani || 0) - refKadin;
+        const labelKadin = document.getElementById('label-ref-kadin');
+        const labelEngelli = document.getElementById('label-ref-engelli');
+        const labelYil = document.getElementById('label-ref-yil');
+        if (labelKadin) labelKadin.innerText = refKadin + '%';
+        if (labelEngelli) labelEngelli.innerText = refEngelli + '%';
+        if (labelYil) labelYil.innerText = refYil;
+
+        const newData = (barDataRaw || []).map(item => {
+            let baseScore = parseFloat(item?.kriter_uyumluluk_puani ?? 0);
+
+            const kadinDiff = (item?.kadin_calisan_orani ?? 0) - refKadin;
             baseScore += (kadinDiff / 2);
 
-            const engelliDiff = (item.engelli_calisan_orani || 0) - refEngelli;
+            const engelliDiff = (item?.engelli_calisan_orani ?? 0) - refEngelli;
             baseScore += (engelliDiff * 5);
 
-            const yilDiff = (item.kurulus_yili || 2000) - refYil;
+            const yilDiff = (item?.kurulus_yili ?? 2000) - refYil;
             baseScore += (yilDiff / 2);
 
             return Math.min(100, Math.max(0, Math.round(baseScore)));
         });
 
-        // Update Main Data
         window.chartBar.data.datasets[0].data = newData;
-
-        // Update Reference Lines
-        window.chartBar.data.datasets[1].data = Array(barDataRaw.length).fill(refKadin);
-        window.chartBar.data.datasets[2].data = Array(barDataRaw.length).fill(refEngelli);
-        window.chartBar.data.datasets[3].data = Array(barDataRaw.length).fill(refYil);
+        window.chartBar.data.datasets[1].data = Array((barDataRaw || []).length).fill(refKadin);
+        window.chartBar.data.datasets[2].data = Array((barDataRaw || []).length).fill(refEngelli);
+        window.chartBar.data.datasets[3].data = Array((barDataRaw || []).length).fill(refYil);
 
         window.chartBar.update();
     };
