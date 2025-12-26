@@ -12,8 +12,8 @@ export const getAnalizPage = async (req, res) => {
                 ft.tahmini_getiri
             FROM firmalar f
             LEFT JOIN firma_tahminleme ft ON f.id = ft.firma_id
-            WHERE ft.tahmini_getiri IS NOT NULL
-            ORDER BY ft.tahmini_getiri DESC
+                WHERE ft.tahmini_getiri IS NOT NULL
+                ORDER BY ft.tahmini_getiri DESC
         `;
 
         // --- 2. Pie Chart: Top 7 Sustainability Data ---
